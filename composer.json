@@ -5,11 +5,14 @@
         "php": ">=7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "doctrine/annotations": "^1.11",
         "symfony/console": "5.1.*",
         "symfony/dotenv": "5.1.*",
         "symfony/flex": "^1.3.1",
         "symfony/framework-bundle": "5.1.*",
+        "symfony/validator": "5.1.*",
+        "gozoro/russian-calendar": "0.0.3",
         "symfony/yaml": "5.1.*"
     },
     "require-dev": {
