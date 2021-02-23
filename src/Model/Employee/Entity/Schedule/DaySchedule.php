@@ -11,6 +11,7 @@ class DaySchedule implements JsonSerializable
 {
     private string $day;
     private array $timeRanges;
+    private bool $invertTimeRanges = false;
 
     public function __construct(string $day)
     {
@@ -26,6 +27,11 @@ class DaySchedule implements JsonSerializable
     {
         $this->timeRanges[] = $timeRange;
         return $this;
+    }
+
+    public function invertTimeRanges(): void
+    {
+        $this->invertTimeRanges = true;
     }
 
     /**
@@ -44,11 +50,38 @@ class DaySchedule implements JsonSerializable
         return $this->timeRanges;
     }
 
+    public function getInverseTimeRanges(): array
+    {
+        $workDaySchedule = $this->getTimeRanges();
+        $notWorkDaySchedule = [];
+        $lastItem = [];
+        for ($i = 0; $i < count($workDaySchedule); $i++) {
+            if ($i == 0) {
+                $notWorkDaySchedule[] = $this->setStart($workDaySchedule[$i]);
+                $lastItem = $workDaySchedule[$i];
+                continue;
+            }
+            $notWorkDaySchedule[] = new TimeRange($lastItem->getEnd(), $workDaySchedule[$i]->getStart());
+            $lastItem = $workDaySchedule[$i];
+        }
+        $notWorkDaySchedule[] = $this->setEnd($lastItem);
+        return $notWorkDaySchedule;
+    }
+    private function setStart($item): TimeRange
+    {
+        return new TimeRange('00:00', $item->getStart());
+    }
+
+    private function setEnd($item): TimeRange
+    {
+        return new TimeRange($item->getEnd(), '00:00');
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'day' => $this->day,
-            'timeRanges' => $this->timeRanges,
+            'timeRanges' => ($this->invertTimeRanges) ? $this->getInverseTimeRanges() : $this->getTimeRanges(),
         ];
     }
 }

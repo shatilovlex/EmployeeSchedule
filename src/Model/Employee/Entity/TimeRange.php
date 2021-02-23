@@ -38,7 +38,6 @@ class TimeRange implements JsonSerializable
         return $this->end;
     }
 
-
     public function jsonSerialize(): array
     {
         return [
